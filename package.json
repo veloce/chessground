@@ -1,0 +1,22 @@
+{
+  "name": "chessground",
+  "version": "0.1.0",
+  "description": "Chess board library",
+  "main": "chessground.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veloce/chessground-js.git"
+  },
+  "keywords": [
+    "chessboard"
+  ],
+  "author": "Vincent Velociter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/veloce/chessground-js/issues"
+  },
+  "homepage": "https://github.com/veloce/chessground-js"
+}
