@@ -47,9 +47,9 @@ function Chessground(element, cfg) {
     });
   };
 
-  function position(fen) {
+  function setFen(fen) {
     if (state.chess.load(fen)) {
-      drawPieces(state.chess);
+      drawPieces();
       return true;
     }
     return false;
@@ -58,7 +58,9 @@ function Chessground(element, cfg) {
   drawSquares();
   drawPieces();
 
-  return {};
+  return {
+    setFen: setFen
+  };
 }
 
 module.exports = Chessground;
