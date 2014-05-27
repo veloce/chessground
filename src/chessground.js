@@ -63,6 +63,11 @@ function Chessground(element, cfg) {
     drawPieces();
   }
 
+  function clear() {
+    state.chess.clear();
+    drawPieces();
+  }
+
   function isValidColor(color) {
     return color === 'white' || color === 'black';
   }
@@ -72,7 +77,8 @@ function Chessground(element, cfg) {
 
   return {
     setFen: setFen,
-    setOrientation: setOrientation
+    setOrientation: setOrientation,
+    clear: clear
   };
 }
 
