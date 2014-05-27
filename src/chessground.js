@@ -32,7 +32,9 @@ function Chessground(element, cfg) {
     var html = '';
     for (var rank = 8; rank > 0; rank--) {
       for (var file = 1; file < 9; file++) {
-        var key = constants.files[file - 1] + rank;
+        var key = state.orientation === 'white' ?
+          (constants.files[file - 1] + rank) :
+          (constants.files[8 - file] + (9 - rank));
         html += '<div data-key="' + key + '"></div>';
       }
     }
@@ -55,11 +57,22 @@ function Chessground(element, cfg) {
     return false;
   }
 
+  function setOrientation(color) {
+    if (isValidColor(color)) state.orientation = color;
+    drawSquares();
+    drawPieces();
+  }
+
+  function isValidColor(color) {
+    return color === 'white' || color === 'black';
+  }
+
   drawSquares();
   drawPieces();
 
   return {
-    setFen: setFen
+    setFen: setFen,
+    setOrientation: setOrientation
   };
 }
 
