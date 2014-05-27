@@ -1,9 +1,10 @@
 'use strict';
 
-var Chess = require('chess.js');
+var Chess = require('chess.js').Chess;
 
 function Chessground(element, cfg) {
-  // constructor
+  //
+  var chessground = {};
 
   cfg = cfg || {};
   var files = 'abcdefgh';
@@ -33,6 +34,11 @@ function Chessground(element, cfg) {
   drawSquares();
   var chess = new Chess(cfg.fen || startFEN);
   drawPieces(chess);
+
+  // public methods
+  // chessground.move = move;
+
+  return chessground;
 }
 
 module.exports = Chessground;
