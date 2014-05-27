@@ -45,11 +45,11 @@ function Chessground(element, cfg) {
       var html = piece ? '<div class="piece ' + constants.types[piece.type] + ' ' + constants.colors[piece.color] + '"></div>' : '';
       square.innerHTML = html;
     });
-  }
+  };
 
   function position(fen) {
-    if (chess.load(fen)) {
-      drawPieces(chess);
+    if (state.chess.load(fen)) {
+      drawPieces(state.chess);
       return true;
     }
     return false;
