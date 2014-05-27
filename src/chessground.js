@@ -63,6 +63,10 @@ function Chessground(element, cfg) {
     drawPieces();
   }
 
+  function toggleOrientation() {
+    setOrientation(state.orientation === 'white' ? 'black' : 'white');
+  }
+
   function clear() {
     state.chess.clear();
     drawPieces();
@@ -78,6 +82,7 @@ function Chessground(element, cfg) {
   return {
     setFen: setFen,
     setOrientation: setOrientation,
+    toggleOrientation: toggleOrientation,
     clear: clear
   };
 }
