@@ -3,7 +3,12 @@
 
   function Chessground(element, cfg) {
     // constructor
+
+    cfg = cfg || {};
     var files = 'abcdefgh';
+    var types = {p: 'pawn', r: 'rook', b: 'bishop', n: 'knight', q: 'queen', k: 'king'};
+    var colors = {w: 'white', b: 'black'};
+    var startFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
     var drawSquares = function() {
       var html = '';
@@ -19,14 +24,13 @@
     var drawPieces = function(chess) {
       Array.prototype.forEach.call(element.children, function(square) {
         var piece = chess.get(square.getAttribute('data-key'));
-        var html = piece ? '<div class="piece ' + piece.type + ' ' + piece.color + '"></div>' : '';
+        var html = piece ? '<div class="piece ' + types[piece.type] + ' ' + colors[piece.color] + '"></div>' : '';
         square.innerHTML = html;
       });
     };
 
     drawSquares();
-    var fen = 'rnb1kbnr/pppp1ppp/8/4p3/5PPq/8/PPPPP2P/RNBQKBNR w KQkq - 1 3';
-    var chess = new Chess(fen);
+    var chess = new Chess(cfg.fen || startFEN);
     drawPieces(chess);
   }
 
