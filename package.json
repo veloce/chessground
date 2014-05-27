@@ -18,5 +18,15 @@
   "bugs": {
     "url": "https://github.com/veloce/chessground-js/issues"
   },
-  "homepage": "https://github.com/veloce/chessground-js"
+  "homepage": "https://github.com/veloce/chessground-js",
+  "devDependencies": {
+    "vinyl-source-stream": "~0.1.1",
+    "gulp-util": "~2.2.14",
+    "gulp": "~3.6.2",
+    "gulp-jshint": "~1.6.1",
+    "browserify": "~4.1.5"
+  },
+  "dependencies": {
+    "chess.js": "~0.1.0"
+  }
 }
