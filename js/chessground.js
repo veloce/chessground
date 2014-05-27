@@ -3,6 +3,7 @@
 
   function Chessground(element, cfg) {
     // constructor
+    console.log(element);
 
     var drawSquares = function() {
       var html = '';
@@ -15,6 +16,7 @@
       }
       element.innerHTML = html;
     };
+    drawSquares();
   }
 
   window.Chessground = Chessground;
