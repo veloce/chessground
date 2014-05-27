@@ -25,7 +25,8 @@ function Chessground(element, cfg) {
   // all mutable data goes in there
   var state = {
     chess: new Chess(cfg.fen),
-    orientation: cfg.orientation || 'white'
+    orientation: cfg.orientation || 'white',
+    draggable: cfg.draggable || true
   };
 
   function drawSquares() {
@@ -42,10 +43,72 @@ function Chessground(element, cfg) {
   }
 
   function drawPieces() {
+    var html;
     Array.prototype.forEach.call(element.children, function(square) {
       var piece = state.chess.get(square.getAttribute('data-key'));
-      var html = piece ? '<div class="piece ' + constants.types[piece.type] + ' ' + constants.colors[piece.color] + '"></div>' : '';
+      if (piece) {
+        var classes = ['piece', constants.types[piece.type], constants.colors[piece.color]].join(' ');
+        html = '<div draggable="' + state.draggable + '" class="' + classes + '"></div>';
+      } else {
+        html = '';
+      }
       square.innerHTML = html;
+    });
+  }
+
+  function makeDraggable() {
+
+    var handleDragStart = function(e) {
+      this.style.opacity = '0.7';
+      e.dataTransfer.setData('Text', this.getAttribute('data-key'));
+    };
+
+    function handleDragOver(e) {
+      if (e.preventDefault) {
+        e.preventDefault(); // Necessary. Allows us to drop.
+      }
+
+      e.dataTransfer.dropEffect = 'move'; // See the section on the DataTransfer object.
+
+      return false;
+    }
+
+    function handleDragEnter(e) {
+      // this / e.target is the current hover target.
+      this.classList.add('over');
+    }
+
+    function handleDragLeave(e) {
+      this.classList.remove('over'); // this / e.target is previous target element.
+    }
+
+    function handleDrop(e) {
+      // this / e.target is current target element.
+
+      if (e.stopPropagation) {
+        e.stopPropagation(); // stops the browser from redirecting.
+      }
+
+      // See the section on the DataTransfer object.
+
+      return false;
+    }
+
+    function handleDragEnd(e) {
+      // this/e.target is the source node.
+
+      [].forEach.call(cols, function(col) {
+        col.classList.remove('over');
+      });
+    }
+
+    Array.prototype.forEach.call(element.querySelectorAll('.piece[draggable]'), function(piece) {
+      piece.addEventListener('dragstart', handleDragStart, false);
+      piece.addEventListener('dragenter', handleDragEnter, false);
+      piece.addEventListener('dragover', handleDragOver, false);
+      piece.addEventListener('dragleave', handleDragLeave, false);
+      piece.addEventListener('drop', handleDrop, false);
+      piece.addEventListener('dragend', handleDragEnd, false);
     });
   }
 
@@ -78,6 +141,7 @@ function Chessground(element, cfg) {
 
   drawSquares();
   drawPieces();
+  makeDraggable();
 
   return {
     setFen: setFen,
