@@ -1,6 +1,10 @@
 chessground
 ===========
 
+## Install dependencies
+
+    $ npm install
+
 ## Dev mode
 
     $ gulp
