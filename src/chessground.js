@@ -1,10 +1,21 @@
 'use strict';
 
 var Chess = require('chess.js').Chess;
+var _ = require('lodash');
 
 function Chessground(element, cfg) {
 
-  cfg = cfg || {};
+  var defaults = {
+    orientation: 'white',
+    draggable: {
+      enabled: 'both', // 'white' | 'black' | 'both' | false
+      events: {
+        start: function( /* e, piece, pos */ ) {
+          return true; // return false to prevent the drag from happening
+        }
+      }
+    }
+  };
 
   var constants = {
     files: 'abcdefgh',
@@ -19,40 +30,43 @@ function Chessground(element, cfg) {
     colors: {
       w: 'white',
       b: 'black'
-    }
+    },
+    squares: _.flatten(_.map(_.range(1, 8), function(rank) {
+      return _.map('abcdefgh', function(file) {
+        return '' + rank + file;
+      });
+    }))
   };
 
   // all mutable data goes in there
-  var state = {
-    chess: new Chess(cfg.fen),
-    orientation: cfg.orientation || 'white',
-    draggable: cfg.draggable || true
-  };
+  // use the fen config to create a chess object,
+  // then drop the fen. The chess object will provide it.
+  var state = _.omit(_.merge(defaults, cfg), 'fen');
+  state.chess = new Chess();
+  if (cfg && cfg.fen) state.chess.load(cfg.fen); else state.chess.reset();
 
   function drawSquares() {
-    var html = '';
-    for (var rank = 8; rank > 0; rank--) {
-      for (var file = 1; file < 9; file++) {
+    element.innerHTML = _.flatten(_.map(_.range(8, 0, -1), function(rank) {
+      return _.map(_.range(1, 9), function(file) {
         var key = state.orientation === 'white' ?
           (constants.files[file - 1] + rank) :
           (constants.files[8 - file] + (9 - rank));
-        html += '<div data-key="' + key + '"></div>';
-      }
-    }
-    element.innerHTML = html;
+        return '<div data-key="' + key + '"></div>';
+      });
+    })).join('');
   }
 
   function drawPieces() {
     var html;
-    Array.prototype.forEach.call(element.children, function(square) {
-      var piece = state.chess.get(square.getAttribute('data-key'));
+    _.forEach(element.children, function($square) {
+      var piece = state.chess.get($square.getAttribute('data-key'));
       if (piece) {
         var classes = ['piece', constants.types[piece.type], constants.colors[piece.color]].join(' ');
-        html = '<div draggable="' + state.draggable + '" class="' + classes + '"></div>';
+        html = '<div class="' + classes + '"></div>';
       } else {
         html = '';
       }
-      square.innerHTML = html;
+      $square.innerHTML = html;
     });
   }
 
@@ -67,48 +81,37 @@ function Chessground(element, cfg) {
       if (e.preventDefault) {
         e.preventDefault(); // Necessary. Allows us to drop.
       }
-
       e.dataTransfer.dropEffect = 'move'; // See the section on the DataTransfer object.
-
       return false;
     }
 
     function handleDragEnter(e) {
-      // this / e.target is the current hover target.
-      this.classList.add('over');
+      e.target.classList.add('over');
     }
 
     function handleDragLeave(e) {
-      this.classList.remove('over'); // this / e.target is previous target element.
+      e.target.classList.remove('over'); // this / e.target is previous target element.
     }
 
     function handleDrop(e) {
-      // this / e.target is current target element.
-
       if (e.stopPropagation) {
         e.stopPropagation(); // stops the browser from redirecting.
       }
-
-      // See the section on the DataTransfer object.
 
       return false;
     }
 
     function handleDragEnd(e) {
-      // this/e.target is the source node.
-
-      [].forEach.call(cols, function(col) {
-        col.classList.remove('over');
-      });
+      console.log(e, 'drag end');
     }
 
-    Array.prototype.forEach.call(element.querySelectorAll('.piece[draggable]'), function(piece) {
-      piece.addEventListener('dragstart', handleDragStart, false);
-      piece.addEventListener('dragenter', handleDragEnter, false);
-      piece.addEventListener('dragover', handleDragOver, false);
-      piece.addEventListener('dragleave', handleDragLeave, false);
-      piece.addEventListener('drop', handleDrop, false);
-      piece.addEventListener('dragend', handleDragEnd, false);
+    _.forEach(element.querySelectorAll('.piece'), function($piece) {
+      $piece.addEventListener('dragstart', handleDragStart, false);
+      $piece.addEventListener('dragenter', handleDragEnter, false);
+      $piece.addEventListener('dragover', handleDragOver, false);
+      $piece.addEventListener('dragleave', handleDragLeave, false);
+      $piece.addEventListener('drop', handleDrop, false);
+      $piece.addEventListener('dragend', handleDragEnd, false);
     });
   }
 
@@ -120,10 +123,25 @@ function Chessground(element, cfg) {
     return false;
   }
 
+  function getFen() {
+    return state.chess.fen();
+  }
+
   function setOrientation(color) {
     if (isValidColor(color)) state.orientation = color;
     drawSquares();
     drawPieces();
+  }
+
+  function getOrientation() {
+    return state.orientation;
+  }
+
+  function setDraggable(value) {
+    if (['both', 'white', 'black', null].contains(value)) {
+      state.draggable.enabled = value;
+      makeDraggable();
+    }
   }
 
   function toggleOrientation() {
@@ -133,6 +151,17 @@ function Chessground(element, cfg) {
   function clear() {
     state.chess.clear();
     drawPieces();
+  }
+
+  // [{type: 'p', color: 'w', square: 'a2'}, ...]
+  function getPieces() {
+    return _.compact(_.map(constants.squares, function(s) {
+      var piece = state.chess.get(s);
+      if (piece) {
+        piece.square = s;
+        return piece;
+      }
+    }));
   }
 
   function isValidColor(color) {
@@ -145,8 +174,12 @@ function Chessground(element, cfg) {
 
   return {
     setFen: setFen,
+    getFen: getFen,
+    getPieces: getPieces,
     setOrientation: setOrientation,
+    getOrientation: getOrientation,
     toggleOrientation: toggleOrientation,
+    setDraggable: setDraggable,
     clear: clear
   };
 }
