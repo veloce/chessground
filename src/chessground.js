@@ -39,13 +39,13 @@ function Chessground(element, cfg) {
     element.innerHTML = html;
   }
 
-  var drawPieces = function() {
+  function drawPieces() {
     Array.prototype.forEach.call(element.children, function(square) {
       var piece = state.chess.get(square.getAttribute('data-key'));
       var html = piece ? '<div class="piece ' + constants.types[piece.type] + ' ' + constants.colors[piece.color] + '"></div>' : '';
       square.innerHTML = html;
     });
-  };
+  }
 
   function setFen(fen) {
     if (state.chess.load(fen)) {
