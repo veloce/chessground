@@ -51,7 +51,13 @@ function Chessground(element, cfg) {
         var key = state.orientation === 'white' ?
           (constants.files[file - 1] + rank) :
           (constants.files[8 - file] + (9 - rank));
-        return '<div data-key="' + key + '"></div>';
+        var xpos = (file - 1) * 12.5;
+        var ypos = (rank - 1) * 12.5;
+        var style = (getOrientation() === 'white') ?
+          'left:' + xpos + '%; bottom:' + ypos + '%;' :
+          'right:' + xpos + '%; top:' + ypos + '%;' ;
+
+        return '<div class="square" style="' + style + '" data-key="' + key + '"></div>';
       });
     })).join('');
   }

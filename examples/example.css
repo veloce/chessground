@@ -4,6 +4,7 @@
   display: inline-block;
   border: 5px solid #ccc;
   border-radius: 2px;
+  position: relative;
 }
 .board.tiny {
   width: 225px;
@@ -26,13 +27,12 @@
 .board.marble {
   background-image: url('http://lichess1.org/assets/images/board/marble.jpg');
 }
-.board > div {
-  position: relative;
-  display: inline-block;
+.board > .square {
+  position: absolute;
   width: 12.5%;
   height: 12.5%;
 }
-.board > div.last {
+.board > .square.last {
   background: radial-gradient(ellipse at center, rgba(155, 199, 00, 0.81) 0%, rgba(155, 199, 00, 0) 100%);
 }
 .board.coordinates > div::before {
