@@ -2,6 +2,7 @@
 
 var Chess = require('chess.js').Chess;
 var _ = require('lodash');
+var interact = window.interact;
 
 function Chessground(element, cfg) {
 
@@ -77,48 +78,45 @@ function Chessground(element, cfg) {
   }
 
   function makeDraggable() {
+    var // x and y to keep the position that's been dragged to
+    x = 0,
+    y = 0,
+    // vendor prefixes (prefices?)
+    transformProp = 'transform' in document.body.style?
+    'transform': 'webkitTransform' in document.body.style?
+    'webkitTransform': 'mozTransform' in document.body.style?
+    'mozTransform': 'oTransform' in document.body.style?
+    'oTransform': 'msTransform';
 
-    var handleDragStart = function(e) {
-      this.style.opacity = '0.7';
-      e.dataTransfer.setData('Text', this.getAttribute('data-key'));
-    };
+    interact('.square').dropzone(true)
+    .on('dragenter', function (event) {
+      var draggableElement = event.relatedTarget,
+      dropzoneElement = event.target;
 
-    function handleDragOver(e) {
-      if (e.preventDefault) {
-        e.preventDefault(); // Necessary. Allows us to drop.
-      }
-      e.dataTransfer.dropEffect = 'move'; // See the section on the DataTransfer object.
-      return false;
-    }
-
-    function handleDragEnter(e) {
-      e.target.classList.add('over');
-    }
-
-    function handleDragLeave(e) {
-      e.target.classList.remove('over'); // this / e.target is previous target element.
-    }
-
-    function handleDrop(e) {
-      if (e.stopPropagation) {
-        e.stopPropagation(); // stops the browser from redirecting.
-      }
-
-      return false;
-    }
-
-    function handleDragEnd(e) {
-      console.log(e, 'drag end');
-    }
-
-    _.forEach(element.querySelectorAll('.piece'), function($piece) {
-      $piece.addEventListener('dragstart', handleDragStart, false);
-      $piece.addEventListener('dragenter', handleDragEnter, false);
-      $piece.addEventListener('dragover', handleDragOver, false);
-      $piece.addEventListener('dragleave', handleDragLeave, false);
-      $piece.addEventListener('drop', handleDrop, false);
-      $piece.addEventListener('dragend', handleDragEnd, false);
+      dropzoneElement.classList.add('drag-over');
+    })
+    .on('dragleave', function (event) {
+      event.target.classList.remove('drag-over');
+    })
+    .on('drop', function (event) {
+      var piece = event.relatedTarget;
+      piece.removeAttribute('style');
+      piece.classList.remove('can-drop');
+      event.target.appendChild(piece);
     });
+
+    interact('.piece').draggable({
+      onmove: function (event) {
+        var target = event.target;
+
+        target.x = (target.x|0) + event.dx;
+        target.y = (target.y|0) + event.dy;
+
+        target.style[transformProp] = target.style.transform =
+        'translate(' + target.x + 'px, ' + target.y + 'px)';
+      }
+    });
+
   }
 
   function setFen(fen) {

@@ -32,6 +32,11 @@
   width: 12.5%;
   height: 12.5%;
 }
+.square.selected, .square.drag-over {
+  box-shadow: none;
+  background: rgba(216, 85, 0, 0.3);
+}
+
 .board > .square.last {
   background: radial-gradient(ellipse at center, rgba(155, 199, 00, 0.81) 0%, rgba(155, 199, 00, 0) 100%);
 }
