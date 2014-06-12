@@ -100,9 +100,14 @@ function Chessground(element, cfg) {
     })
     .on('drop', function (event) {
       var piece = event.relatedTarget;
-      piece.removeAttribute('style');
+      var square = event.target;
       piece.classList.remove('can-drop');
-      event.target.appendChild(piece);
+      piece.parentNode.removeChild(piece);
+
+      var newPiece = document.createElement('div');
+      newPiece.className = piece.className;
+      square.appendChild(newPiece);
+      square.classList.remove('drag-over');
     });
 
     interact('.piece').draggable({
