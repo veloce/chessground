@@ -87,9 +87,7 @@ function Chessground(element, cfg) {
 
     interact('.square').dropzone(true)
     .on('dragenter', function (event) {
-      var draggableElement = event.relatedTarget,
-      dropzoneElement = event.target;
-
+      var dropzoneElement = event.target;
       dropzoneElement.classList.add('drag-over');
     })
     .on('dragleave', function (event) {
@@ -106,6 +104,7 @@ function Chessground(element, cfg) {
     interact('.piece').draggable({
       onmove: function (event) {
         var target = event.target;
+        target.classList.add('dragging');
 
         target.x = (target.x|0) + event.dx;
         target.y = (target.y|0) + event.dy;
@@ -144,26 +143,24 @@ function Chessground(element, cfg) {
     }
     // there is a piece selected
     else if (selectedPiece) {
-      movePiece(selectedPiece, square);
-      state.selected = null;
+      if (square !== selectedPiece.parentNode) {
+        movePiece(selectedPiece, square);
+        state.selected = null;
+      }
     }
   }
 
   function movePiece(piece, destSquare, isDragging) {
     var destPiece = destSquare.querySelector('.piece');
-    var classes;
-
-    piece.classList.remove('can-drop');
     piece.parentNode.classList.remove('selected');
-    classes = piece.className;
     piece.parentNode.removeChild(piece);
 
-    if (destPiece) {
+    if (destPiece && destPiece !== piece) {
       destSquare.removeChild(destPiece);
     }
 
     var newPiece = document.createElement('div');
-    newPiece.className = classes;
+    newPiece.className = isDragging ? piece.className.replace('dragging', '') : piece.className;
     destSquare.appendChild(newPiece);
 
     if (isDragging) destSquare.classList.remove('drag-over');
