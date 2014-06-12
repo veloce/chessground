@@ -44,6 +44,7 @@ function Chessground(element, cfg) {
   // then drop the fen. The chess object will provide it.
   var state = _.omit(_.merge(defaults, cfg), 'fen');
   state.chess = new Chess();
+  state.selected = null;
   if (cfg && cfg.fen) state.chess.load(cfg.fen); else state.chess.reset();
 
   function drawSquares() {
@@ -78,11 +79,7 @@ function Chessground(element, cfg) {
   }
 
   function makeDraggable() {
-    var // x and y to keep the position that's been dragged to
-    x = 0,
-    y = 0,
-    // vendor prefixes (prefices?)
-    transformProp = 'transform' in document.body.style?
+    var transformProp = 'transform' in document.body.style?
     'transform': 'webkitTransform' in document.body.style?
     'webkitTransform': 'mozTransform' in document.body.style?
     'mozTransform': 'oTransform' in document.body.style?
@@ -97,17 +94,13 @@ function Chessground(element, cfg) {
     })
     .on('dragleave', function (event) {
       event.target.classList.remove('drag-over');
+      event.target.classList.remove('selected');
     })
     .on('drop', function (event) {
       var piece = event.relatedTarget;
       var square = event.target;
-      piece.classList.remove('can-drop');
-      piece.parentNode.removeChild(piece);
-
-      var newPiece = document.createElement('div');
-      newPiece.className = piece.className;
-      square.appendChild(newPiece);
-      square.classList.remove('drag-over');
+      movePiece(piece, square, true);
+      state.selected = null;
     });
 
     interact('.piece').draggable({
@@ -122,6 +115,58 @@ function Chessground(element, cfg) {
       }
     });
 
+  }
+
+  function bindEvents() {
+    // touchstart
+    var squares = element.querySelectorAll('div.square');
+    for (var i=0 ; i < squares.length ; i++) {
+      squares[i].addEventListener('touchstart', function(e) {
+        selectPiece(getSquare(e.target));
+      });
+    }
+  }
+
+  function getSquare(el) {
+    if (el.classList.contains('piece')) {
+      return el.parentNode;
+    }
+    return el;
+  }
+
+  function selectPiece(square) {
+    var pieceInSquare = square.querySelector('.piece');
+    var selectedPiece = state.selected;
+    // there is a piece and no other selected
+    if (pieceInSquare && !selectedPiece) {
+      square.classList.add('selected');
+      state.selected = pieceInSquare;
+    }
+    // there is a piece selected
+    else if (selectedPiece) {
+      movePiece(selectedPiece, square);
+      state.selected = null;
+    }
+  }
+
+  function movePiece(piece, destSquare, isDragging) {
+    var destPiece = destSquare.querySelector('.piece');
+    var classes;
+
+    piece.classList.remove('can-drop');
+    piece.parentNode.classList.remove('selected');
+    classes = piece.className;
+    piece.parentNode.removeChild(piece);
+
+    if (destPiece) {
+      destSquare.removeChild(destPiece);
+    }
+
+    var newPiece = document.createElement('div');
+    newPiece.className = classes;
+    destSquare.appendChild(newPiece);
+
+    if (isDragging) destSquare.classList.remove('drag-over');
   }
 
   function setFen(fen) {
@@ -180,6 +225,7 @@ function Chessground(element, cfg) {
   drawSquares();
   drawPieces();
   makeDraggable();
+  bindEvents();
 
   return {
     setFen: setFen,
