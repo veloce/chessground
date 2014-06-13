@@ -123,6 +123,9 @@ function Chessground(element, cfg) {
       squares[i].addEventListener('touchstart', function(e) {
         selectPiece(getSquare(e.target));
       });
+      squares[i].addEventListener('mousedown', function(e) {
+        selectPiece(getSquare(e.target));
+      });
     }
   }
 
