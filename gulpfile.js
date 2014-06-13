@@ -11,7 +11,7 @@ gulp.task('lint', function() {
 });
 
 gulp.task('scripts', function() {
-  var bundleStream = browserify('./src/chessground.js').bundle({
+  var bundleStream = browserify('./src/main.js').bundle({
     debug: true,
     standalone: 'Chessground'
   });
