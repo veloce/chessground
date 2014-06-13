@@ -23,7 +23,6 @@ function makeDraggable(state) {
     var piece = event.relatedTarget;
     var square = event.target;
     ctrl.movePiece(state, piece, square, true);
-    state.selected = null;
   });
 
   interact('.piece').draggable({

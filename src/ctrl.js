@@ -2,18 +2,25 @@
 
 function movePiece(state, piece, destSquare, isDragging) {
   var destPiece = destSquare.querySelector('.piece');
-  piece.parentNode.classList.remove('selected');
-  piece.parentNode.removeChild(piece);
+  var origSquare = piece.parentNode;
 
   if (destPiece && destPiece !== piece) {
     destSquare.removeChild(destPiece);
   }
 
+  origSquare.removeChild(piece);
   var newPiece = document.createElement('div');
   newPiece.className = isDragging ? piece.className.replace('dragging', '') : piece.className;
   destSquare.appendChild(newPiece);
 
   if (isDragging) destSquare.classList.remove('drag-over');
+
+  if (origSquare !== destSquare) {
+    origSquare.classList.remove('selected');
+    state.selected = null;
+  } else {
+    state.selected = newPiece;
+  }
 }
 
 function selectSquare(state, square) {
@@ -28,7 +35,6 @@ function selectSquare(state, square) {
   else if (selectedPiece) {
     if (square !== selectedPiece.parentNode) {
       movePiece(state, selectedPiece, square);
-      state.selected = null;
     }
   }
 }
