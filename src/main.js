@@ -76,7 +76,7 @@ function Chessground(element, cfg) {
   function setDraggable(value) {
     if (['both', 'white', 'black', null].contains(value)) {
       state.draggable.enabled = value;
-      makeDraggable();
+      drag.makeDraggable();
     }
   }
 
