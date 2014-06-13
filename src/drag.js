@@ -1,6 +1,6 @@
 'use strict';
 
-var interact = window.interact;
+var interact = require('./vendor/interact');
 var ctrl = require('./ctrl');
 
 function makeDraggable(state) {
