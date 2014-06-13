@@ -122,7 +122,7 @@ function Chessground(element, cfg) {
 
     function selectHandler(e) {
       e.preventDefault();
-      selectPiece(getSquare(e.target));
+      selectSquare(getSquare(e.target));
     }
 
     for (var i=0 ; i < squares.length ; i++) {
@@ -138,7 +138,7 @@ function Chessground(element, cfg) {
     return el;
   }
 
-  function selectPiece(square) {
+  function selectSquare(square) {
     var pieceInSquare = square.querySelector('.piece');
     var selectedPiece = state.selected;
     // there is a piece and no other selected
