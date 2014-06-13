@@ -117,15 +117,16 @@ function Chessground(element, cfg) {
   }
 
   function bindEvents() {
-    // touchstart
+    // touchstart, mousedown
     var squares = element.querySelectorAll('div.square');
+
+    function selectHandler(e) {
+      selectPiece(getSquare(e.target));
+    }
+
     for (var i=0 ; i < squares.length ; i++) {
-      squares[i].addEventListener('touchstart', function(e) {
-        selectPiece(getSquare(e.target));
-      });
-      squares[i].addEventListener('mousedown', function(e) {
-        selectPiece(getSquare(e.target));
-      });
+      squares[i].addEventListener('touchstart', selectHandler);
+      squares[i].addEventListener('mousedown', selectHandler);
     }
   }
 
