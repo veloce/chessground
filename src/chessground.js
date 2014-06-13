@@ -121,6 +121,7 @@ function Chessground(element, cfg) {
     var squares = element.querySelectorAll('div.square');
 
     function selectHandler(e) {
+      e.preventDefault();
       selectPiece(getSquare(e.target));
     }
 
