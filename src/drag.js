@@ -4,6 +4,7 @@ var interact = require('./vendor/interact');
 var ctrl = require('./ctrl');
 
 var draggingDiv;
+var draggingDivPos = {};
 
 document.addEventListener("DOMContentLoaded", function() {
   draggingDiv = document.createElement('div');
@@ -56,22 +57,26 @@ function makeDraggable(root, state) {
     var h2 = h * 2;
     var w2 = w * 2;
 
-    if (!draggingDiv.style.height) {
+    // first enter
+    if (isHidden(draggingDiv)) {
+      console.log('first enter');
       draggingDiv.style.height = h2 + 'px';
       draggingDiv.style.width = w2 + 'px';
-    }
+      draggingDiv.style.left = rect.left - (w / 2);
+      draggingDiv.style.top = rect.top - (h / 2);
 
-    draggingDiv.style.left = rect.left - (w / 2);
-    draggingDiv.style.top = rect.top - (h / 2);
+      draggingDivPos = rect;
 
-    if (isHidden(draggingDiv)) {
       draggingDiv.style.display = 'block';
+
     }
 
-  })
-  .on('dragleave', function (event) {
-  })
-  .on('dragend', function() {
+    var dx = rect.left - draggingDivPos.left;
+    var dy = rect.top - draggingDivPos.top;
+
+    draggingDiv.style[transformProp] = draggingDiv.style.transform =
+    'translate3d(' + dx + 'px, ' + dy + 'px, 0)';
+
   })
   .on('drop', function (event) {
     draggingDiv.style.display = 'none';
