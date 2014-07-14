@@ -1,6 +1,6 @@
 'use strict';
 
-function movePiece(state, piece, destSquare, isDragging) {
+function movePiece(root, state, piece, destSquare, isDragging) {
   var destPiece = destSquare.querySelector('.piece');
   var origSquare = piece.parentNode;
 
@@ -8,12 +8,19 @@ function movePiece(state, piece, destSquare, isDragging) {
     destSquare.removeChild(destPiece);
   }
 
+  if (isDragging) destSquare.classList.remove('drag-over');
+
   origSquare.removeChild(piece);
   var newPiece = document.createElement('div');
   newPiece.className = isDragging ? piece.className.replace('dragging', '') : piece.className;
   destSquare.appendChild(newPiece);
 
-  if (isDragging) destSquare.classList.remove('drag-over');
+  var anyMoved = root.querySelectorAll('.moved');
+  for (var i=0; i < anyMoved.length; i++) {
+    anyMoved[i].classList.remove('moved');
+  }
+  origSquare.classList.add('moved');
+  destSquare.classList.add('moved');
 
   if (origSquare !== destSquare) {
     origSquare.classList.remove('selected');
@@ -23,7 +30,7 @@ function movePiece(state, piece, destSquare, isDragging) {
   }
 }
 
-function selectSquare(state, square) {
+function selectSquare(root, state, square) {
   var pieceInSquare = square.querySelector('.piece');
   var selectedPiece = state.selected;
   // there is a piece and no other selected
@@ -34,7 +41,7 @@ function selectSquare(state, square) {
   // there is a piece selected
   else if (selectedPiece) {
     if (square !== selectedPiece.parentNode) {
-      movePiece(state, selectedPiece, square);
+      movePiece(root, state, selectedPiece, square);
     }
   }
 }

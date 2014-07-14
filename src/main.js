@@ -35,7 +35,7 @@ function Chessground(element, cfg) {
 
     function selectHandler(e) {
       e.preventDefault();
-      ctrl.selectSquare(state, getSquare(e.target));
+      ctrl.selectSquare(element, state, getSquare(e.target));
     }
 
     for (var i=0 ; i < squares.length ; i++) {
@@ -76,7 +76,7 @@ function Chessground(element, cfg) {
   function setDraggable(value) {
     if (['both', 'white', 'black', null].contains(value)) {
       state.draggable.enabled = value;
-      drag.makeDraggable();
+      drag.makeDraggable(element, state);
     }
   }
 
@@ -106,7 +106,7 @@ function Chessground(element, cfg) {
 
   render.drawSquares(element, state);
   render.drawPieces(element, state);
-  drag.makeDraggable(state);
+  drag.makeDraggable(element, state);
   bindEvents();
 
   return {
