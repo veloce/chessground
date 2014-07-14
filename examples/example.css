@@ -39,6 +39,12 @@ body{
   box-shadow: none;
   background: rgba(216, 85, 0, 0.3);
 }
+.moving-square {
+  display: none;
+  position: absolute;
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
 
 .board > .square.last {
   background: radial-gradient(ellipse at center, rgba(155, 199, 00, 0.81) 0%, rgba(155, 199, 00, 0) 100%);
@@ -46,6 +52,7 @@ body{
 .board .square.moved {
   background: rgba(155, 199, 0, 0.41);
 }
+
 .board.coordinates > div::after {
   position: absolute;
   left: 2px;
@@ -67,9 +74,10 @@ body{
 .board .piece.dragging {
   cursor: move;
   z-index: 9;
-  width: 200%;
-  height: 200%;
+  width: 150%;
+  height: 150%;
 }
+
 .pirouetti .piece {
   bottom: 0;
   left: -15%;
